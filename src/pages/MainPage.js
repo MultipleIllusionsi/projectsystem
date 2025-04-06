@@ -540,12 +540,31 @@ const MainPage = () => {
         }}
       >
         {/* <Toolbar /> */}
-        <Typography variant="h5" gutterBottom>
-          {selectedProjectData?.title}
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          {selectedProjectData?.description}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', mb: 6 }}>
+            <Typography variant="h5" gutterBottom>
+              {selectedProjectData?.title}
+            </Typography>
+            
+            {currentUser?.role === 'supervisor' && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Button 
+                  variant="contained" 
+                  startIcon={<AddIcon />}
+                  onClick={handleAddTask}
+                >
+                  Add Task
+                </Button>
+              </Box>
+            )}
+            {/* <Typography variant="subtitle1" gutterBottom>
+              {selectedProjectData?.description}
+            </Typography> */}
+          </Box>
+          
+            
+        </Box>
+        
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, mt: 8 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -582,7 +601,7 @@ const MainPage = () => {
               )}
             </Box>
   
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {currentUser?.role === 'supervisor' && (
               <Button 
                 variant="contained" 
@@ -592,20 +611,24 @@ const MainPage = () => {
                 Add Task
               </Button>
             )}
-          </Box>
+          </Box> */}
         </Box>
 
         <Grid container spacing={2}>
           {filteredTasks.map((task) => (
-            <Grid item xs={12} sm={6} md={4} key={task.id}>
-              <Card 
+            <Grid item xs={12} sm={6} md={3} key={task.id}>
+              <Card
                 sx={{ 
+                  width: '100%',
                   height: '100%', 
                   display: 'flex', 
                   flexDirection: 'column',
+                  // minHeight: 200, // Set minimum height
                   cursor: 'pointer',
+                  transition: 'all 0.3s ease',
                   '&:hover': {
-                    boxShadow: 3
+                    transform: 'translateY(-4px)',
+                    boxShadow: 6
                   }
                 }}
                 onClick={() => handleTaskClick(task.id)}
