@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Container, 
@@ -19,14 +19,16 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 
-import { TASK_STATUS, TASK_PRIORITY } from '../constants';
+import { TASK_STATUS } from '../constants';
 
 const AddTaskPage = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [projects, setProjects] = useState([]);
+  
   const [formData, setFormData] = useState({
-    projectId: '',
+    projectId: location.state?.selectedProject || '',
     title: '',
     scheduledTime: '',
     performer: '',
@@ -38,8 +40,13 @@ const AddTaskPage = () => {
   useEffect(() => {
     const storedProjects = JSON.parse(localStorage.getItem('projects')) || [];
     setProjects(storedProjects);
-    if (storedProjects.length > 0) {
-      setFormData(prev => ({ ...prev, projectId: storedProjects[0].id }));
+
+    // If no project selected but projects exist, use the first one
+    if (!formData.projectId && storedProjects.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        projectId: storedProjects[0].id
+      }));
     }
   }, []);
 
@@ -50,14 +57,18 @@ const AddTaskPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!formData.projectId) {
+      alert('Please select a project');
+      setIsSubmitting(false);
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Generate a unique ID for the new task
-    const newTaskId = Date.now().toString();
-
     const newTask = {
-      id: newTaskId,
-      projectId: formData.projectId,
+      id: Date.now().toString(),
+      projectId: formData.projectId, // Ensure this uses the selected project
       title: formData.title,
       scheduledTime: parseInt(formData.scheduledTime),
       elapsedTime: 0,
@@ -67,17 +78,13 @@ const AddTaskPage = () => {
       isArchived: false
     };
 
-    // Get existing tasks from localStorage
     const existingTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    const updatedTasks = [...existingTasks, newTask];
-
-    // Save back to localStorage
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    localStorage.setItem('tasks', JSON.stringify([...existingTasks, newTask]));
 
     // Simulate API call delay
     setTimeout(() => {
+      navigate('/main', { state: { selectedProject: formData.projectId } });
       setIsSubmitting(false);
-      navigate('/main');
     }, 1000);
   };
 

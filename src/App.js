@@ -11,6 +11,8 @@ import AddProjectPage from './pages/AddProjectPage';
 import EditTaskPage from './pages/EditTaskPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
+import Layout from './components/Layout';
+
 const theme = createTheme({
   palette: {
     mode: 'light',
@@ -62,6 +64,17 @@ function App() {
           <RouteTracker />
           <Routes>
             <Route path="/" element={<AuthPage />} />
+            <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+              <Route path="/main" element={<MainPage />} />
+              <Route path="/add-task" element={<AddTaskPage />} />
+              <Route path="/task/:taskId" element={<TaskDetailPage />} />
+              <Route path="/task/:taskId/edit" element={<EditTaskPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/add-project" element={<AddProjectPage />} />
+            </Route>
+          </Routes>
+          {/* <Routes>
+            <Route path="/" element={<AuthPage />} />
             <Route path="/main" element={
               <ProtectedRoute>
                 <MainPage />
@@ -92,7 +105,7 @@ function App() {
                 <AddProjectPage />
               </ProtectedRoute>
             } />
-          </Routes>
+          </Routes> */}
         </Router>
       </AuthProvider>
     </ThemeProvider>

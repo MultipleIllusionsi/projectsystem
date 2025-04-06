@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Container, 
@@ -25,7 +25,49 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 
+import {
+  ArrowUpward as HighPriorityIcon,
+  ArrowForward as MediumPriorityIcon,
+  ArrowDownward as LowPriorityIcon,
+  PlayCircleFilled as InProgressIcon,
+  AssignmentTurnedIn as CompletedIcon,
+  Assignment as AssignedIcon
+} from '@mui/icons-material';
+
 import { TASK_STATUS, TASK_PRIORITY } from '../constants';
+
+const priorityStyles = {
+  high: {
+    color: '#d32f2f',
+    icon: <HighPriorityIcon fontSize="small" sx={{ transform: 'scale(1.1)' }} />
+  },
+  medium: {
+    color: '#ed6c02',
+    icon: <MediumPriorityIcon fontSize="small" />
+  },
+  low: {
+    color: '#2e7d32',
+    icon: <LowPriorityIcon fontSize="small" />
+  }
+};
+
+const statusStyles = {
+  assigned: {
+    bgcolor: '#fff3e0',
+    color: '#ef6c00',
+    icon: <AssignedIcon fontSize="small" />
+  },
+  'in progress': {
+    bgcolor: '#e3f2fd',
+    color: '#1976d2',
+    icon: <InProgressIcon fontSize="small" />
+  },
+  completed: {
+    bgcolor: '#e8f5e9',
+    color: '#388e3c',
+    icon: <CompletedIcon fontSize="small" />
+  }
+};
 
 const TaskDetailPage = () => {
   const { taskId } = useParams();
@@ -36,6 +78,8 @@ const TaskDetailPage = () => {
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [unarchiveDialogOpen, setUnarchiveDialogOpen] = useState(false);
+
+  const { mobileOpen, handleDrawerToggle } = useOutletContext();
 
   useEffect(() => {
     const fetchData = () => {
@@ -174,7 +218,7 @@ const TaskDetailPage = () => {
           <Typography component="h1" variant="h4">
             {task.title}
           </Typography>
-          <Stack direction="row" spacing={1}>
+          {/* <Stack direction="row" spacing={1}>
             <Chip 
               label={task.priority} 
               color={getPriorityColor(task.priority)} 
@@ -183,7 +227,29 @@ const TaskDetailPage = () => {
               label={task.status} 
               color={getStatusColor(task.status)} 
             />
-          </Stack>
+          </Stack> */}
+
+          <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+            <Chip
+              icon={priorityStyles[task.priority].icon}
+              label={task.priority}
+              variant="outlined"
+              sx={{
+                color: priorityStyles[task.priority].color,
+                borderColor: priorityStyles[task.priority].color,
+                '& .MuiChip-icon': { color: priorityStyles[task.priority].color }
+              }}
+            />
+            <Chip
+              icon={statusStyles[task.status].icon}
+              label={task.status}
+              sx={{
+                bgcolor: statusStyles[task.status].bgcolor,
+                color: statusStyles[task.status].color,
+                '& .MuiChip-icon': { color: statusStyles[task.status].color }
+              }}
+            />
+          </Box>
         </Box>
         
         <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 1 }}>

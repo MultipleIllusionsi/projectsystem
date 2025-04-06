@@ -35,11 +35,8 @@ const AddProjectPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Generate a unique ID for the new project
-    const newProjectId = Date.now().toString();
-
     const newProject = {
-      id: newProjectId,
+      id: Date.now().toString(),
       ...formData
     };
 
@@ -53,7 +50,11 @@ const AddProjectPage = () => {
     // Simulate API call delay
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate('/projects');
+      // navigate('/projects');
+      navigate('/main', { state: { selectedProject: newProject.id } });
+      // navigate('/add-task', { 
+      //   state: { selectedProject: newProject.id } 
+      // });
     }, 1000);
   };
 
